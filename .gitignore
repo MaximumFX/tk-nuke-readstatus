@@ -1,0 +1,12 @@
+# IDE specific files
+.idea
+venv
+.vscode
+
+# Compiled Python files
+*.py[co]
+__pycache__
+
+# Other
+.DS_Store
+.psd
