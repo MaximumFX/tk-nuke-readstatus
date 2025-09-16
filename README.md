@@ -11,10 +11,6 @@ Todo
 
 ## Configuration
 
-| Type     | Key                      | Description                                                                          | Default value                       |
-|----------|--------------------------|--------------------------------------------------------------------------------------|-------------------------------------|
-| str      | `oiiotool`               | Path to oiiotool binary. If blank, the hoiiotool included with Houdini will be used. |                                     |
-
 ### Example configuration
 ```yaml
 settings.tk-nuke-readstatus:
@@ -49,7 +45,3 @@ settings.tk-nuke-readstatus:
     - work: nuke_asset_render
       publish: nuke_asset_render_pub
 ```
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
