@@ -83,10 +83,13 @@ class TkNukeReadStatus(sgtk.platform.Application):
             },
         )
 
-        nuke.addOnCreate(self.check_this_node)
+        self._script_is_loading = True
+        self._register_nuke_callbacks()
 
     def destroy_app(self):
-        nuke.removeOnCreate(self.check_this_node)
+        nuke.removeOnCreate(self._on_node_created)
+        nuke.removeOnScriptLoad(self._on_script_load)
+        nuke.removeOnScriptClose(self._on_script_close)
 
     def check_this_node(self):
         self.check_node(nuke.thisNode())
@@ -119,3 +122,25 @@ class TkNukeReadStatus(sgtk.platform.Application):
     def node_to_work(self):
         """Version up the currently selected read node"""
         self.handler.node_to_work()
+
+    def _register_nuke_callbacks(self):
+        """Register callbacks used by the app."""
+        nuke.addOnCreate(self._on_node_created)
+        nuke.addOnScriptLoad(self._on_script_load)
+        nuke.addOnScriptClose(self._on_script_close)
+
+    def _on_node_created(self):
+        """Handle node creation after the script has finished loading."""
+        if self._script_is_loading:
+            return
+
+        self.check_this_node()
+
+    def _on_script_load(self):
+        """Mark the end of script loading and refresh the read nodes."""
+        self._script_is_loading = False
+        self.check_script()
+
+    def _on_script_close(self):
+        """Mark the script as loading before a new file is opened."""
+        self._script_is_loading = True
