@@ -96,6 +96,7 @@ class TkNukeReadStatus(sgtk.platform.Application):
 
     def check_script(self):
         """Check the read nodes in the currently open script"""
+        self.handler.update_breakdown()
         self.handler.check_script()
 
     def check_node(self, node):
