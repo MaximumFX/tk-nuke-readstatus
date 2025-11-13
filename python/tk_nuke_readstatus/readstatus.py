@@ -91,9 +91,6 @@ class ReadStatus:
         ]
         self.base_path = self.app.get_setting("icon_base_path")
 
-        # Build the icons
-        # self.build_icons()
-
         breakdown_app = self.current_engine.apps["tk-multi-breakdown2"]
         self.breakdown_manager = (
             breakdown_app.create_breakdown_manager() if breakdown_app else None
@@ -331,6 +328,43 @@ class ReadStatus:
                 nuke.message("Please select a node to switch to work.")
             else:
                 nuke.message(str(error))
+
+    @staticmethod
+    def is_read_node(node: nuke.Node) -> bool:
+        """
+        Check if the node is a read node
+        Args:
+            node (nuke.Node): Nuke node
+
+        Returns:
+            str: File path
+        """
+        if "Write" in node.Class() or "Group" in node.Class():
+            return False
+
+        if (
+            "Read" in node.Class()
+            or "Camera" in node.Class()
+            or "Vectorfield" in node.Class()
+        ):
+            file_key = "file"
+            if "Camera4" in node.Class():
+                file_key = "file"
+            elif "Camera" in node.Class():
+                file_key = "file_link"
+            elif "Vectorfield" in node.Class():
+                file_key = "vfield_file"
+
+            if node.knob(file_key) is None:
+                return False
+
+            return True
+
+        for knob in node.knobs():
+            if "file" in knob and isinstance(node[knob].value(), str):
+                return True
+
+        return False
 
     @staticmethod
     def __get_file_path(node: nuke.Node) -> str | None:

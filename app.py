@@ -83,22 +83,27 @@ class TkNukeReadStatus(sgtk.platform.Application):
             },
         )
 
-        nuke.addOnCreate(self.check_this_node)
+        self._script_is_loading = True
+        self._register_nuke_callbacks()
 
     def destroy_app(self):
-        nuke.removeOnCreate(self.check_this_node)
+        nuke.removeOnCreate(self._on_node_created)
+        nuke.removeOnScriptLoad(self._on_script_load)
+        nuke.removeOnScriptClose(self._on_script_close)
 
     def check_this_node(self):
         self.check_node(nuke.thisNode())
 
     def check_script(self):
         """Check the read nodes in the currently open script"""
+        self.handler.update_breakdown()
         self.handler.check_script()
 
     def check_node(self, node):
         """Update a node's icon in the script"""
-        self.handler.update_breakdown()
-        self.handler.check_node(node)
+        if self.handler.is_read_node(node):
+            self.handler.update_breakdown()
+            self.handler.check_node(node)
 
     def version_up_node(self):
         """Version up the currently selected read node"""
@@ -119,3 +124,25 @@ class TkNukeReadStatus(sgtk.platform.Application):
     def node_to_work(self):
         """Version up the currently selected read node"""
         self.handler.node_to_work()
+
+    def _register_nuke_callbacks(self):
+        """Register callbacks used by the app."""
+        nuke.addOnCreate(self._on_node_created)
+        nuke.addOnScriptLoad(self._on_script_load)
+        nuke.addOnScriptClose(self._on_script_close)
+
+    def _on_node_created(self):
+        """Handle node creation after the script has finished loading."""
+        if self._script_is_loading:
+            return
+
+        self.check_this_node()
+
+    def _on_script_load(self):
+        """Mark the end of script loading and refresh the read nodes."""
+        self._script_is_loading = False
+        self.check_script()
+
+    def _on_script_close(self):
+        """Mark the script as loading before a new file is opened."""
+        self._script_is_loading = True
