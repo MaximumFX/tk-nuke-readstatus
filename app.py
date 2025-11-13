@@ -100,8 +100,9 @@ class TkNukeReadStatus(sgtk.platform.Application):
 
     def check_node(self, node):
         """Update a node's icon in the script"""
-        self.handler.update_breakdown()
-        self.handler.check_node(node)
+        if self.handler.is_read_node(node):
+            self.handler.update_breakdown()
+            self.handler.check_node(node)
 
     def version_up_node(self):
         """Version up the currently selected read node"""

@@ -333,6 +333,43 @@ class ReadStatus:
                 nuke.message(str(error))
 
     @staticmethod
+    def is_read_node(node: nuke.Node) -> bool:
+        """
+        Check if the node is a read node
+        Args:
+            node (nuke.Node): Nuke node
+
+        Returns:
+            str: File path
+        """
+        if "Write" in node.Class() or "Group" in node.Class():
+            return False
+
+        if (
+            "Read" in node.Class()
+            or "Camera" in node.Class()
+            or "Vectorfield" in node.Class()
+        ):
+            file_key = "file"
+            if "Camera4" in node.Class():
+                file_key = "file"
+            elif "Camera" in node.Class():
+                file_key = "file_link"
+            elif "Vectorfield" in node.Class():
+                file_key = "vfield_file"
+
+            if node.knob(file_key) is None:
+                return False
+
+            return True
+
+        for knob in node.knobs():
+            if "file" in knob and isinstance(node[knob].value(), str):
+                return True
+
+        return False
+
+    @staticmethod
     def __get_file_path(node: nuke.Node) -> str | None:
         """
         Get the file path of a node
