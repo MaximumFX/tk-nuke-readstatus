@@ -91,9 +91,6 @@ class ReadStatus:
         ]
         self.base_path = self.app.get_setting("icon_base_path")
 
-        # Build the icons
-        # self.build_icons()
-
         breakdown_app = self.current_engine.apps["tk-multi-breakdown2"]
         self.breakdown_manager = (
             breakdown_app.create_breakdown_manager() if breakdown_app else None
