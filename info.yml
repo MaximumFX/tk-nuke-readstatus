@@ -103,5 +103,8 @@ configuration:
           type: template
           description: Publish template to switch from/to
           fields: "version, *"
+        fields:
+          type: dict
+          description: Fields to map between work and publish. Key is work, value is publish
 
 supported_engines: [ tk-nuke ]
