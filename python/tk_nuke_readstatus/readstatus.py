@@ -152,6 +152,7 @@ class ReadStatus:
 
             # If has template match
             templates = self.app.get_setting("versionable")
+            success = False
             if templates:
                 for template_key in templates:
                     template = self.tk.templates.get(template_key)
@@ -179,10 +180,12 @@ class ReadStatus:
                             os.sep, "/"
                         )
                         self.__set_file_path(node, new_file_path)
-                    else:
-                        self.logger.debug(
-                            f'Can\'t version down "{node.name()}", no versionable template defined'
-                        )
+                        success = True
+
+            if not success:
+                self.logger.debug(
+                    f'Can\'t version down "{node.name()}", no versionable template defined'
+                )
 
         # If something went wrong, e.g. no node selected, let user know
         except Exception as error:
