@@ -259,6 +259,7 @@ class ReadStatus:
                 for mapping in mappings:
                     work_template_key = mapping.get("work")
                     publish_template_key = mapping.get("publish")
+                    fields_map: dict = mapping.get("fields", {})
 
                     work_template = self.tk.templates.get(work_template_key)
                     publish_template = self.tk.templates.get(publish_template_key)
@@ -266,8 +267,8 @@ class ReadStatus:
                     fields = work_template.validate_and_get_fields(file_path)
                     if fields:
                         self.logger.debug(f'Switching "{node.name()}" to publish')
-                        print(work_template)
-                        print(publish_template)
+                        for key, value in fields_map.items():
+                            fields[value] = fields.get(key)
                         new_file_path = publish_template.apply_fields(fields).replace(
                             os.sep, "/"
                         )
@@ -306,6 +307,7 @@ class ReadStatus:
                 for mapping in mappings:
                     work_template_key = mapping.get("work")
                     publish_template_key = mapping.get("publish")
+                    fields_map: dict = mapping.get("fields", {})
 
                     work_template = self.tk.templates.get(work_template_key)
                     publish_template = self.tk.templates.get(publish_template_key)
@@ -313,8 +315,8 @@ class ReadStatus:
                     fields = publish_template.validate_and_get_fields(file_path)
                     if fields:
                         self.logger.debug(f'Switching "{node.name()}" to work')
-                        print(work_template)
-                        print(publish_template)
+                        for key, value in fields_map.items():
+                            fields[key] = fields.get(value)
                         new_file_path = work_template.apply_fields(fields).replace(
                             os.sep, "/"
                         )
